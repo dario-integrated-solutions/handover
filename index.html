@@ -1,0 +1,522 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="robots" content="noindex, nofollow">
+<title>Secure Handover · Dario Integrated Solutions</title>
+<style>
+  :root{
+    --ink:#1c2433; --ink-soft:#4a5468; --ink-faint:#8a93a6;
+    --bg:#faf9f7; --card:#ffffff; --line:#e7e4de;
+    --gold:#a8854c; --gold-soft:#f3ead9;
+    --ok:#1a7f4e; --ok-bg:#eaf6ef;
+    --warn:#9a6b00; --warn-bg:#fdf4e0;
+    --bad:#b3261e; --bad-bg:#fdecea;
+    --radius:12px;
+    --font:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Helvetica,Arial,sans-serif;
+    --mono:ui-monospace,SFMono-Regular,"Cascadia Mono",Consolas,Menlo,monospace;
+  }
+  *{box-sizing:border-box}
+  html,body{margin:0;padding:0}
+  body{background:var(--bg);color:var(--ink);font-family:var(--font);line-height:1.55;-webkit-font-smoothing:antialiased}
+  .wrap{max-width:760px;margin:0 auto;padding:28px 20px 80px}
+  header{display:flex;align-items:center;gap:14px;padding:6px 0 22px}
+  .mark{width:42px;height:42px;border-radius:10px;background:linear-gradient(135deg,#2a3550,#1c2433);color:#e9d9b8;
+        display:flex;align-items:center;justify-content:center;font-weight:700;font-size:14px;letter-spacing:.5px;flex:0 0 auto}
+  .brand small{display:block;color:var(--ink-faint);font-size:12.5px;letter-spacing:.2px}
+  .brand b{font-size:18px;font-weight:650;letter-spacing:.2px}
+  h1{font-size:26px;font-weight:700;margin:6px 0 4px}
+  .client{display:inline-block;background:var(--gold-soft);color:#6e5526;border:1px solid #e6d7b8;
+          border-radius:999px;padding:3px 12px;font-size:13px;font-weight:600;margin:2px 0 18px}
+  .steps{background:var(--card);border:1px solid var(--line);border-radius:var(--radius);padding:16px 18px;margin:0 0 22px}
+  .steps ol{margin:6px 0 2px;padding-left:22px}
+  .steps li{margin:6px 0;color:var(--ink-soft)}
+  .steps li b{color:var(--ink)}
+  .trust{font-size:13px;color:var(--ink-faint);margin-top:10px;padding-top:10px;border-top:1px dashed var(--line)}
+  .pill{position:sticky;top:10px;z-index:5;display:flex;justify-content:flex-end;pointer-events:none}
+  .pill span{pointer-events:auto;background:var(--ink);color:#fff;border-radius:999px;padding:7px 16px;font-size:13.5px;font-weight:600;
+             box-shadow:0 4px 14px rgba(28,36,51,.25)}
+  .pill span.done{background:var(--ok)}
+  .row{background:var(--card);border:1px solid var(--line);border-left:4px solid var(--line);border-radius:var(--radius);
+       padding:16px 18px;margin:0 0 14px;transition:border-color .15s}
+  .row.ok{border-left-color:var(--ok)}
+  .row.warn{border-left-color:var(--warn)}
+  .row .head{display:flex;align-items:baseline;gap:10px}
+  .num{flex:0 0 auto;width:26px;height:26px;border-radius:50%;background:var(--gold-soft);color:#6e5526;
+       display:flex;align-items:center;justify-content:center;font-size:13px;font-weight:700;transform:translateY(3px)}
+  .row.ok .num{background:var(--ok-bg);color:var(--ok)}
+  .name{font-family:var(--mono);font-size:14.5px;font-weight:600;word-break:break-all}
+  .hint{font-size:12.5px;color:var(--ink-faint);margin:2px 0 8px 36px}
+  input[type=text],input[type=password],textarea{
+    width:100%;border:1.5px solid var(--line);border-radius:9px;padding:10px 12px;font-size:14px;
+    font-family:var(--mono);color:var(--ink);background:#fff;outline:none}
+  input:focus,textarea:focus{border-color:#9db0d6;box-shadow:0 0 0 3px rgba(90,120,190,.12)}
+  .row input{margin-left:36px;width:calc(100% - 36px)}
+  .status{margin:7px 0 0 36px;font-size:12.5px;color:var(--ink-faint)}
+  .status.ok{color:var(--ok)}
+  .status.warn{color:var(--warn)}
+  .chip{font-family:var(--mono)}
+  .lockcard{background:var(--card);border:1px solid var(--line);border-radius:var(--radius);padding:20px;margin:26px 0 14px}
+  .lockcard h2{font-size:18px;margin:0 0 4px}
+  .lockcard p.sub{margin:0 0 14px;color:var(--ink-soft);font-size:14px}
+  .passrow{margin:0 0 12px}
+  .passrow label{display:block;font-size:13.5px;font-weight:600;margin:0 0 5px}
+  .passnote{font-size:12.5px;color:var(--ink-faint);margin-top:5px}
+  .passnote.bad{color:var(--bad)}
+  .passnote.ok{color:var(--ok)}
+  .showtoggle{font-size:13px;color:var(--ink-soft);display:flex;align-items:center;gap:7px;margin:4px 0 14px;cursor:pointer;user-select:none}
+  .confirmwarn{background:var(--warn-bg);border:1px solid #ecd9a8;border-radius:9px;padding:10px 12px;font-size:13.5px;color:#6e5526;
+               display:flex;gap:9px;align-items:flex-start;margin:0 0 14px}
+  .confirmwarn input{margin-top:3px}
+  button.primary{
+    width:100%;border:0;border-radius:10px;background:var(--ink);color:#fff;font-size:16.5px;font-weight:700;
+    padding:15px;cursor:pointer;font-family:var(--font);letter-spacing:.2px;transition:opacity .15s}
+  button.primary:disabled{opacity:.35;cursor:not-allowed}
+  button.primary:not(:disabled):hover{opacity:.92}
+  button.ghost{border:1.5px solid var(--line);background:#fff;color:var(--ink);border-radius:9px;padding:8px 14px;
+               font-size:13.5px;font-weight:600;cursor:pointer;font-family:var(--font)}
+  button.ghost:hover{border-color:var(--ink-faint)}
+  .resultcard{background:var(--ok-bg);border:1px solid #bfe3cd;border-radius:var(--radius);padding:20px;margin:14px 0}
+  .resultcard h2{margin:0 0 8px;font-size:19px;color:var(--ok)}
+  .resultcard .next{font-size:15px;margin:0 0 6px}
+  .resultcard .keep{font-size:13.5px;color:var(--ink-soft);margin:10px 0 0}
+  .blockbox{margin-top:14px}
+  .blockbox textarea{height:130px;font-size:12px;background:#fff}
+  .err{background:var(--bad-bg);border:1px solid #f0c4c0;color:var(--bad);border-radius:9px;padding:10px 13px;
+       font-size:14px;margin:12px 0 0;display:none}
+  .kv{display:flex;align-items:center;gap:10px;background:var(--card);border:1px solid var(--line);border-radius:9px;
+      padding:10px 13px;margin:0 0 9px}
+  .kv .k{font-family:var(--mono);font-size:13px;font-weight:600;flex:0 0 38%;word-break:break-all}
+  .kv .v{font-family:var(--mono);font-size:13px;color:var(--ink-soft);flex:1;word-break:break-all}
+  .kv button{flex:0 0 auto}
+  .landing{background:var(--card);border:1px solid var(--line);border-radius:var(--radius);padding:30px;text-align:center;color:var(--ink-soft)}
+  footer{margin-top:46px;padding-top:16px;border-top:1px solid var(--line);font-size:12.5px;color:var(--ink-faint);
+         display:flex;justify-content:space-between;gap:14px;flex-wrap:wrap}
+  footer a{color:var(--ink-soft)}
+  .toolnote{font-size:13px;color:var(--ink-faint);margin:10px 0 0}
+  .copyfeedback{color:var(--ok);font-weight:600;font-size:13px;margin-left:8px;opacity:0;transition:opacity .2s}
+  .copyfeedback.show{opacity:1}
+  details{margin-top:12px}
+  summary{cursor:pointer;font-size:13.5px;color:var(--ink-soft)}
+  @media (max-width:560px){
+    .kv{flex-wrap:wrap}
+    .kv .k{flex-basis:100%}
+  }
+</style>
+</head>
+<body>
+<div class="wrap">
+  <header>
+    <div class="mark">DIS</div>
+    <div class="brand"><b>Secure Handover</b><small>Dario Integrated Solutions</small></div>
+  </header>
+  <main id="view"></main>
+  <footer>
+    <span>This page runs entirely on your computer. It sends nothing anywhere.</span>
+    <span><a href="#read">Unlock a package</a> &nbsp;·&nbsp; <a href="#setup">Create a handover link</a></span>
+  </footer>
+</div>
+
+<script>
+"use strict";
+
+/* ---------- helpers ---------- */
+const $ = (s,el)=> (el||document).querySelector(s);
+const enc = new TextEncoder();
+const dec = new TextDecoder();
+
+function bytesToB64(bytes){
+  let bin=""; const b=new Uint8Array(bytes);
+  for(let i=0;i<b.length;i++) bin+=String.fromCharCode(b[i]);
+  return btoa(bin);
+}
+function b64ToBytes(b64){
+  const bin=atob(b64.replace(/\s+/g,""));
+  const out=new Uint8Array(bin.length);
+  for(let i=0;i<bin.length;i++) out[i]=bin.charCodeAt(i);
+  return out;
+}
+function b64urlEncodeUtf8(str){
+  return bytesToB64(enc.encode(str)).replace(/\+/g,"-").replace(/\//g,"_").replace(/=+$/,"");
+}
+function b64urlDecodeUtf8(s){
+  let b=s.replace(/-/g,"+").replace(/_/g,"/");
+  while(b.length%4) b+="=";
+  return dec.decode(b64ToBytes(b));
+}
+function el(tag,attrs,children){
+  const n=document.createElement(tag);
+  if(attrs) for(const k in attrs){
+    if(k==="text") n.textContent=attrs[k];
+    else if(k==="html") n.innerHTML=attrs[k]; /* only ever called with static app strings */
+    else if(k.startsWith("on")) n.addEventListener(k.slice(2),attrs[k]);
+    else n.setAttribute(k,attrs[k]);
+  }
+  (children||[]).forEach(c=> n.appendChild(typeof c==="string"?document.createTextNode(c):c));
+  return n;
+}
+async function copyText(t){
+  try{ await navigator.clipboard.writeText(t); return true; }
+  catch(e){
+    try{
+      const ta=document.createElement("textarea");
+      ta.value=t; ta.style.position="fixed"; ta.style.opacity="0";
+      document.body.appendChild(ta); ta.select();
+      const ok=document.execCommand("copy");
+      document.body.removeChild(ta);
+      return ok;
+    }catch(e2){ return false; }
+  }
+}
+
+/* ---------- crypto core (mirrored in test_crypto.mjs) ---------- */
+const KDF_ITER = 600000;
+const HEAD = "-----BEGIN DIS SECURE HANDOVER-----";
+const FOOT = "-----END DIS SECURE HANDOVER-----";
+
+async function deriveKey(passphrase, salt, iterations){
+  const base = await crypto.subtle.importKey("raw", enc.encode(passphrase), "PBKDF2", false, ["deriveKey"]);
+  return crypto.subtle.deriveKey(
+    {name:"PBKDF2", salt, iterations, hash:"SHA-256"},
+    base, {name:"AES-GCM", length:256}, false, ["encrypt","decrypt"]
+  );
+}
+async function seal(passphrase, payloadObj){
+  const salt = crypto.getRandomValues(new Uint8Array(16));
+  const iv   = crypto.getRandomValues(new Uint8Array(12));
+  const key  = await deriveKey(passphrase, salt, KDF_ITER);
+  const ct   = await crypto.subtle.encrypt({name:"AES-GCM", iv}, key, enc.encode(JSON.stringify(payloadObj)));
+  const envelope = {v:1, app:"dis-secure-handover", kdf:"PBKDF2-SHA256", iter:KDF_ITER,
+                    salt:bytesToB64(salt), iv:bytesToB64(iv), ct:bytesToB64(ct)};
+  const b64 = bytesToB64(enc.encode(JSON.stringify(envelope)));
+  const lines = b64.match(/.{1,64}/g).join("\n");
+  return HEAD+"\n"+lines+"\n"+FOOT;
+}
+async function openSealed(block, passphrase){
+  /* tolerate email mangling: strip whitespace, drop junk but keep hyphens so the
+     dashed markers re-merge, remove the markers, then drop anything non-base64 */
+  let body = block.replace(/\s+/g,"");
+  body = body.replace(/[^A-Za-z0-9+\/=\-]/g,"");
+  body = body.replace(/-----[A-Za-z]*?-----/g,"");
+  body = body.replace(/[^A-Za-z0-9+\/=]/g,"");
+  let envelope;
+  try{ envelope = JSON.parse(dec.decode(b64ToBytes(body))); }
+  catch(e){ throw {code:"FORMAT"}; }
+  if(!envelope || envelope.app!=="dis-secure-handover" || !envelope.ct) throw {code:"FORMAT"};
+  try{
+    const key = await deriveKey(passphrase, b64ToBytes(envelope.salt), envelope.iter||KDF_ITER);
+    const pt  = await crypto.subtle.decrypt({name:"AES-GCM", iv:b64ToBytes(envelope.iv)}, key, b64ToBytes(envelope.ct));
+    return JSON.parse(dec.decode(pt));
+  }catch(e){ throw {code:"PASS"}; }
+}
+
+/* ---------- validation rules (confident prefixes only) ---------- */
+const RULES = {
+  "ANTHROPIC_API_KEY":        {prefixAny:["sk-ant-"], hint:"Starts with sk-ant-"},
+  "OPENAI_API_KEY":           {prefixAny:["sk-"], hint:"Starts with sk-"},
+  "STRIPE_SECRET_KEY":        {prefixAny:["sk_live_","sk_test_"], hint:"Starts with sk_live_ (or sk_test_)"},
+  "RESEND_API_KEY":           {prefixAny:["re_"], hint:"Starts with re_"},
+  "REPLICATE_API_TOKEN":      {prefixAny:["r8_"], hint:"Starts with r8_"},
+  "GMAIL_APP_PASSWORD":       {pattern:/^[a-z]{4}( [a-z]{4}){3}$/, allowSpaces:true, hint:"Four groups of four letters, with the spaces"},
+  "PRIVATE_OBJECT_DIR":       {prefixAny:["/"], hint:"Starts with /"},
+  "PUBLIC_OBJECT_SEARCH_PATHS":{prefixAny:["/"], hint:"Starts with / (it may contain commas)"}
+};
+function ruleFor(name){
+  if(RULES[name]) return RULES[name];
+  if(/_URL$/.test(name)) return {prefixAny:["http://","https://"], hint:"A web address, starts with https://"};
+  return {hint:"Paste the whole value exactly as Replit shows it"};
+}
+function validate(name, value, allValues){
+  const r = ruleFor(name);
+  const v = value;
+  const warns = [];
+  if(!v) return {state:"empty", warns:[]};
+  if(v.length<4) warns.push("looks too short");
+  if(!r.allowSpaces && /\s/.test(v)) warns.push("contains a space or line break, check the copy");
+  if(r.prefixAny && !r.prefixAny.some(p=>v.startsWith(p))) warns.push("does not start the usual way ("+r.prefixAny[0]+"...), double-check it");
+  if(r.pattern && !r.pattern.test(v)) warns.push("does not match the usual shape, double-check it");
+  for(const other in allValues){
+    if(other!==name && allValues[other] && allValues[other]===v){ warns.push("same value as "+other+", double-check both"); break; }
+  }
+  return {state:warns.length?"warn":"ok", warns};
+}
+function chipFor(v){
+  if(!v) return "";
+  if(v.length<=8) return v.length+" characters";
+  return v.slice(0,4)+"…"+v.slice(-4)+" · "+v.length+" characters";
+}
+
+/* ---------- state ---------- */
+let config = null;            /* {c: clientLabel, n: [names]} */
+const values = {};            /* name -> value (lives only in memory) */
+
+/* ---------- fill mode ---------- */
+function renderFill(){
+  const view = $("#view"); view.textContent="";
+  document.title = "Secure Handover · "+config.c;
+
+  view.appendChild(el("h1",{text:"Copying the app keys across, safely"}));
+  view.appendChild(el("span",{class:"client",text:config.c}));
+
+  const steps = el("div",{class:"steps"},[
+    el("b",{text:"Four easy steps, we do this together on the call:"}),
+    el("ol",{},[
+      el("li",{html:"In Replit, reveal each key, copy it, and paste it into its <b>matching box</b> below. The page ticks each one as you go."}),
+      el("li",{html:"Type the <b>passphrase Dario gives you on the call</b>, twice."}),
+      el("li",{html:"Press <b>Lock &amp; Copy for Dario</b>."}),
+      el("li",{html:"Paste into a <b>reply to Dario's email</b> and send."})
+    ]),
+    el("div",{class:"trust",text:"Nothing you paste here leaves this page until it is locked. The locked package can only be opened with the passphrase."})
+  ]);
+  view.appendChild(steps);
+
+  const pill = el("div",{class:"pill"},[el("span",{id:"pill",text:"0 of "+config.n.length+" pasted"})]);
+  view.appendChild(pill);
+
+  config.n.forEach((name,i)=>{
+    const r = ruleFor(name);
+    const input = el("input",{type:"text",autocomplete:"off",spellcheck:"false",autocapitalize:"off",
+                              "aria-label":name,
+                              oninput:(e)=>onValue(name,e.target),
+                              onfocus:(e)=>{e.target.type="text";},
+                              onblur:(e)=>{ if(values[name]) e.target.type="password"; }});
+    const row = el("div",{class:"row",id:"row-"+i},[
+      el("div",{class:"head"},[ el("div",{class:"num",text:String(i+1)}), el("div",{class:"name",text:name}) ]),
+      el("div",{class:"hint",text:r.hint}),
+      input,
+      el("div",{class:"status",id:"st-"+i,text:"Waiting for this one"})
+    ]);
+    view.appendChild(row);
+  });
+
+  const lock = el("div",{class:"lockcard"},[
+    el("h2",{text:"Lock it"}),
+    el("p",{class:"sub",text:"Type the passphrase Dario gives you on the call. Type it twice so a typing slip cannot sneak in."}),
+    el("div",{class:"passrow"},[
+      el("label",{text:"Passphrase"}),
+      el("input",{type:"password",id:"pass1",autocomplete:"new-password",spellcheck:"false",oninput:refreshGate})
+    ]),
+    el("div",{class:"passrow"},[
+      el("label",{text:"Passphrase again"}),
+      el("input",{type:"password",id:"pass2",autocomplete:"new-password",spellcheck:"false",oninput:refreshGate}),
+      el("div",{class:"passnote",id:"passnote",text:"At least 8 characters."})
+    ]),
+    el("label",{class:"showtoggle"},[
+      el("input",{type:"checkbox",onchange:(e)=>{
+        const t=e.target.checked?"text":"password"; $("#pass1").type=t; $("#pass2").type=t;
+      }}),
+      "Show what I type"
+    ]),
+    el("div",{class:"confirmwarn",id:"confirmwarn",style:"display:none"},[
+      el("input",{type:"checkbox",id:"confirmchk",onchange:refreshGate}),
+      el("span",{text:"Some boxes have an amber note. I have double-checked those against Replit and they are right."})
+    ]),
+    el("button",{class:"primary",id:"lockbtn",disabled:"disabled",text:"Lock & Copy for Dario",onclick:doLock}),
+    el("div",{class:"err",id:"lockerr"})
+  ]);
+  view.appendChild(lock);
+  view.appendChild(el("div",{id:"resultslot"}));
+}
+
+function onValue(name, inputEl){
+  let v = inputEl.value;
+  const trimmed = v.replace(/^\s+|\s+$/g,"");
+  if(trimmed!==v){ inputEl.value=trimmed; v=trimmed; }
+  values[name]=v;
+  refreshAll();
+}
+function refreshAll(){
+  let filled=0, warns=0;
+  config.n.forEach((name,i)=>{
+    const res = validate(name, values[name]||"", values);
+    const row = $("#row-"+i), st = $("#st-"+i);
+    row.classList.remove("ok","warn");
+    st.classList.remove("ok","warn");
+    if(res.state==="empty"){ st.textContent="Waiting for this one"; }
+    else if(res.state==="ok"){
+      filled++; row.classList.add("ok"); st.classList.add("ok");
+      st.textContent="Looks right · "+chipFor(values[name]);
+    } else {
+      filled++; warns++; row.classList.add("warn"); st.classList.add("warn");
+      st.textContent="Worth a second look: "+res.warns[0]+" · "+chipFor(values[name]);
+    }
+  });
+  const pill=$("#pill");
+  pill.textContent = filled+" of "+config.n.length+" pasted";
+  pill.classList.toggle("done", filled===config.n.length);
+  $("#confirmwarn").style.display = warns>0 ? "flex" : "none";
+  refreshGate();
+}
+function refreshGate(){
+  const p1=$("#pass1").value, p2=$("#pass2").value, note=$("#passnote");
+  let passOk=false;
+  if(!p1 && !p2){ note.textContent="At least 8 characters."; note.className="passnote"; }
+  else if(p1.length<8){ note.textContent="A little longer, at least 8 characters."; note.className="passnote bad"; }
+  else if(p1!==p2){ note.textContent="The two do not match yet."; note.className="passnote bad"; }
+  else { note.textContent="Passphrases match."; note.className="passnote ok"; passOk=true; }
+
+  let filled=0, warns=0;
+  config.n.forEach(name=>{
+    const res=validate(name, values[name]||"", values);
+    if(res.state!=="empty") filled++;
+    if(res.state==="warn") warns++;
+  });
+  const allFilled = filled===config.n.length;
+  const warnOk = warns===0 || $("#confirmchk").checked;
+  $("#lockbtn").disabled = !(allFilled && passOk && warnOk);
+}
+async function doLock(){
+  const btn=$("#lockbtn"); btn.disabled=true; btn.textContent="Locking...";
+  $("#lockerr").style.display="none";
+  try{
+    const payload={client:config.c, created:new Date().toISOString(), secrets:{}};
+    config.n.forEach(n=> payload.secrets[n]=values[n]);
+    const block = await seal($("#pass1").value, payload);
+    const copied = await copyText(block);
+    const slot=$("#resultslot"); slot.textContent="";
+    slot.appendChild(el("div",{class:"resultcard"},[
+      el("h2",{text: copied ? "Locked, and copied." : "Locked."}),
+      el("p",{class:"next",html: copied
+        ? "Now open your email, <b>reply to Dario's message</b>, paste (Ctrl+V), and send."
+        : "Press <b>Copy package</b> below, then reply to Dario's email, paste (Ctrl+V), and send."}),
+      el("div",{},[
+        el("button",{class:"ghost",text:"Copy package again",onclick:async (e)=>{
+          const ok=await copyText(block);
+          const fb=e.target.nextSibling; fb.textContent= ok?"Copied":"Select the text below and copy it"; fb.classList.add("show");
+          setTimeout(()=>fb.classList.remove("show"),2500);
+        }}),
+        el("span",{class:"copyfeedback"})
+      ]),
+      el("details",{class:"blockbox"},[
+        el("summary",{text:"See the sealed package (safe to send, it is locked)"}),
+        el("textarea",{readonly:"readonly",text:block})
+      ]),
+      el("p",{class:"keep",text:"Keep this tab open until Dario confirms it unlocks at his end. If a value needs fixing, just change it above and press Lock again."})
+    ]));
+    slot.scrollIntoView({behavior:"smooth",block:"start"});
+  }catch(e){
+    const err=$("#lockerr"); err.textContent="Something went wrong while locking. Nothing was sent anywhere. Try pressing the button again."; err.style.display="block";
+  }
+  btn.textContent="Lock & Copy for Dario"; refreshGate();
+}
+
+/* ---------- read mode (Dario) ---------- */
+function renderRead(){
+  const view=$("#view"); view.textContent="";
+  document.title="Secure Handover · Unlock";
+  view.appendChild(el("h1",{text:"Unlock a package"}));
+  view.appendChild(el("div",{class:"lockcard"},[
+    el("p",{class:"sub",text:"Paste the whole sealed package, enter the passphrase, unlock. Values appear only on this screen and are never stored."}),
+    el("div",{class:"passrow"},[
+      el("label",{text:"Sealed package"}),
+      el("textarea",{id:"blockin",rows:"8",spellcheck:"false",placeholder:HEAD+" ..."})
+    ]),
+    el("div",{class:"passrow"},[
+      el("label",{text:"Passphrase"}),
+      el("input",{type:"password",id:"rpass",autocomplete:"off",spellcheck:"false"})
+    ]),
+    el("button",{class:"primary",text:"Unlock",onclick:doUnlock}),
+    el("div",{class:"err",id:"rerr"})
+  ]));
+  view.appendChild(el("div",{id:"readout"}));
+}
+async function doUnlock(){
+  const err=$("#rerr"); err.style.display="none";
+  let payload;
+  try{
+    payload = await openSealed($("#blockin").value, $("#rpass").value);
+  }catch(e){
+    err.textContent = e && e.code==="FORMAT"
+      ? "That block looks incomplete or altered. Make sure the whole package was copied, including the BEGIN and END lines."
+      : "That passphrase does not unlock this package. Check it and try again.";
+    err.style.display="block"; return;
+  }
+  const out=$("#readout"); out.textContent="";
+  out.appendChild(el("h1",{text:payload.client||"Package"}));
+  out.appendChild(el("p",{class:"toolnote",text:"Sealed "+(payload.created||"")+" · "+Object.keys(payload.secrets||{}).length+" values. Close this tab when you are done."}));
+  const names=Object.keys(payload.secrets||{});
+  names.forEach(name=>{
+    const v=payload.secrets[name];
+    out.appendChild(el("div",{class:"kv"},[
+      el("span",{class:"k",text:name}),
+      el("span",{class:"v",text:v}),
+      el("button",{class:"ghost",text:"Copy",onclick:async (e)=>{
+        await copyText(v); e.target.textContent="Copied"; setTimeout(()=>e.target.textContent="Copy",1600);
+      }})
+    ]));
+  });
+  out.appendChild(el("div",{style:"margin-top:14px"},[
+    el("button",{class:"ghost",text:"Copy all as JSON (for Replit's Edit as JSON)",onclick:async (e)=>{
+      await copyText(JSON.stringify(payload.secrets,null,2));
+      e.target.textContent="Copied as JSON"; setTimeout(()=>e.target.textContent="Copy all as JSON (for Replit's Edit as JSON)",2000);
+    }})
+  ]));
+}
+
+/* ---------- setup mode (Dario) ---------- */
+function renderSetup(){
+  const view=$("#view"); view.textContent="";
+  document.title="Secure Handover · Create a link";
+  view.appendChild(el("h1",{text:"Create a handover link"}));
+  view.appendChild(el("div",{class:"lockcard"},[
+    el("p",{class:"sub",text:"Name the client, list the secret names one per line, generate. The names travel only inside the link (the # part never reaches any server), so this hosted page stays client-neutral."}),
+    el("div",{class:"passrow"},[
+      el("label",{text:"Client label (shown to the client)"}),
+      el("input",{type:"text",id:"clabel",spellcheck:"false",placeholder:"e.g. VM Luxury Mall (Virtual Style Studio)"})
+    ]),
+    el("div",{class:"passrow"},[
+      el("label",{text:"Secret names, one per line, in the order of the client's Secrets pane"}),
+      el("textarea",{id:"cnames",rows:"10",spellcheck:"false",placeholder:"STRIPE_SECRET_KEY\nSESSION_SECRET\n..."})
+    ]),
+    el("button",{class:"primary",text:"Generate link",onclick:()=>{
+      const label=($("#clabel").value||"Handover").trim();
+      const names=$("#cnames").value.split(/\r?\n/).map(s=>s.trim()).filter(Boolean);
+      if(!names.length) return;
+      const frag="#c="+b64urlEncodeUtf8(JSON.stringify({c:label,n:names}));
+      const link=location.origin!=="null" ? location.origin+location.pathname+frag : location.pathname+frag;
+      const out=$("#setupout"); out.textContent="";
+      out.appendChild(el("div",{class:"resultcard"},[
+        el("h2",{text:names.length+" fields, link ready"}),
+        el("div",{class:"blockbox"},[ el("textarea",{readonly:"readonly",rows:"4",text:link}) ]),
+        el("div",{style:"margin-top:10px"},[
+          el("button",{class:"ghost",text:"Copy link",onclick:async (e)=>{
+            await copyText(link); e.target.textContent="Copied"; setTimeout(()=>e.target.textContent="Copy link",1600);
+          }}),
+          el("span",{text:"  "}),
+          el("button",{class:"ghost",text:"Open it (test as the client)",onclick:()=>{ location.hash=frag.slice(1); }})
+        ]),
+        el("p",{class:"keep",text:"If this page is open as a local file, host it first (your domain or GitHub Pages), then generate the link from the hosted copy, or just append the # part to the hosted address."})
+      ]));
+    }}),
+    el("div",{id:"setupout"})
+  ]));
+}
+
+/* ---------- landing + router ---------- */
+function renderLanding(msg){
+  const view=$("#view"); view.textContent="";
+  view.appendChild(el("div",{class:"landing"},[
+    el("h1",{text:"Secure Handover"}),
+    el("p",{text:msg||"This page needs a personal link. Ask Dario to send you yours."})
+  ]));
+}
+function router(){
+  const h=location.hash||"";
+  for(const k in values) delete values[k];
+  if(h.startsWith("#c=")){
+    try{
+      const cfg=JSON.parse(b64urlDecodeUtf8(h.slice(3)));
+      if(cfg && cfg.c && Array.isArray(cfg.n) && cfg.n.length){ config=cfg; renderFill(); return; }
+    }catch(e){}
+    renderLanding("That link looks incomplete. Ask Dario to send it again, and click it rather than retyping it.");
+  }
+  else if(h==="#read") renderRead();
+  else if(h==="#setup") renderSetup();
+  else renderLanding();
+}
+window.addEventListener("hashchange",router);
+router();
+</script>
+</body>
+</html>
