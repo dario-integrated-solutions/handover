@@ -15,7 +15,7 @@
   61_key_lock.html and 62_key_backup.html, drawn by 60_key_form.js on dis-form.css). Where the edit list and a mock
   differ in a word or a place, the mock as drawn governs, since the picture was approved.
 
-  Shape table: server/platform/config/secret-shapes.ts at commit 6debe4a4a850e3c2a6463789987fdf1b80140dc8
+  Shape table: server/platform/config/secret-shapes.ts at commit 89bf833d8ed21f785ccc7e836e5f3075d2775d52
   The repository's copy of that table (secret-shapes.form.json) is written into the JSON element near the foot of this
   file, between its two SECRET_SHAPES markers, by Dario's script 04_Build\Tools\b201\write_key_form_shapes.py, never by
   hand; the script also writes the commit on the line above. The list of keys, each red sentence and the hint under
@@ -447,8 +447,8 @@ html[data-theme="dark"] .kf-tick input{accent-color:#f2ebdf}
       "onForm": true,
       "apart": false,
       "asked": {
-        "development": "B2.03",
-        "staging": "B2.03",
+        "development": "R2 call",
+        "staging": "R2 call",
         "production": "cutover"
       },
       "show": "first4-last4-length",
@@ -476,6 +476,18 @@ html[data-theme="dark"] .kf-tick input{accent-color:#f2ebdf}
     },
     {
       "name": "PAYPAL_CLIENT_SECRET",
+      "onForm": true,
+      "shapes": null,
+      "apart": false,
+      "asked": {
+        "development": "R2 call",
+        "staging": "R2 call",
+        "production": "cutover"
+      },
+      "show": "first4-last4-length"
+    },
+    {
+      "name": "PAYPAL_WEBHOOK_ID",
       "onForm": true,
       "shapes": null,
       "apart": false,
@@ -661,16 +673,16 @@ html[data-theme="dark"] .kf-tick input{accent-color:#f2ebdf}
       "name": "STRIPE_WEBHOOK_SECRET",
       "environment": "development",
       "release": "R2",
-      "asked": "B2.03",
-      "fillable": false
+      "asked": "R2 call",
+      "fillable": true
     },
     {
       "id": "STRIPE_WEBHOOK_SECRET@staging",
       "name": "STRIPE_WEBHOOK_SECRET",
       "environment": "staging",
       "release": "R2",
-      "asked": "B2.03",
-      "fillable": false
+      "asked": "R2 call",
+      "fillable": true
     },
     {
       "id": "STRIPE_WEBHOOK_SECRET@production",
@@ -723,6 +735,30 @@ html[data-theme="dark"] .kf-tick input{accent-color:#f2ebdf}
     {
       "id": "PAYPAL_CLIENT_SECRET@production",
       "name": "PAYPAL_CLIENT_SECRET",
+      "environment": "production",
+      "release": "R2",
+      "asked": "cutover",
+      "fillable": false
+    },
+    {
+      "id": "PAYPAL_WEBHOOK_ID@development",
+      "name": "PAYPAL_WEBHOOK_ID",
+      "environment": "development",
+      "release": "R2",
+      "asked": "R2 call",
+      "fillable": true
+    },
+    {
+      "id": "PAYPAL_WEBHOOK_ID@staging",
+      "name": "PAYPAL_WEBHOOK_ID",
+      "environment": "staging",
+      "release": "R2",
+      "asked": "R2 call",
+      "fillable": true
+    },
+    {
+      "id": "PAYPAL_WEBHOOK_ID@production",
+      "name": "PAYPAL_WEBHOOK_ID",
       "environment": "production",
       "release": "R2",
       "asked": "cutover",
@@ -908,9 +944,10 @@ const LOOK = {
     get: { url: "https://resend.com/api-keys", words: "Make it on Resend's API keys page", note: "Sign in to Resend first." } },
   STRIPE_SECRET_KEY: { fam: "cobalt", icon: "card", svc: "Stripe", does: "takes card payments", places: { development: "sandbox 1", staging: "sandbox 2" }, cutover: "A restricted key, made for the new app." },
   STRIPE_PUBLISHABLE_KEY: { fam: "cobalt", icon: "card", svc: "Stripe", does: "shows the card form", places: { development: "sandbox 1", staging: "sandbox 2" }, cutover: "Copy your existing live publishable key." },
-  STRIPE_WEBHOOK_SECRET: { fam: "cobalt", icon: "webhook", svc: "Stripe", cutover: "For a new live endpoint." },
+  STRIPE_WEBHOOK_SECRET: { fam: "cobalt", icon: "webhook", svc: "Stripe", does: "checks each payment notice is genuine", places: { development: "sandbox 1", staging: "sandbox 2" }, cutover: "For a new live endpoint." },
   PAYPAL_CLIENT_ID: { fam: "cobalt", icon: "wallet", svc: "PayPal", does: "takes PayPal payments", noShape: "PayPal publishes no key format, so only spaces are checked.", places: { development: "sandbox app 1", staging: "sandbox app 2" } },
   PAYPAL_CLIENT_SECRET: { fam: "cobalt", icon: "wallet", svc: "PayPal", does: "takes PayPal payments", noShape: "PayPal publishes no key format, so only spaces are checked.", places: { development: "sandbox app 1", staging: "sandbox app 2" } },
+  PAYPAL_WEBHOOK_ID: { fam: "cobalt", icon: "webhook", svc: "PayPal", does: "checks each payment notice is genuine", noShape: "PayPal publishes no key format, so only spaces are checked.", places: { development: "sandbox app 1", staging: "sandbox app 2" }, cutover: "For a new live webhook." },
   FASHN_API_KEY: { fam: "orchid", icon: "shirt", svc: "FASHN" },
   REPLICATE_API_TOKEN: { fam: "orchid", icon: "imgplus", svc: "Replicate" },
   OPENAI_API_KEY: { fam: "orchid", icon: "sparkles", svc: "OpenAI" },
