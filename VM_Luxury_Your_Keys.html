@@ -15,7 +15,7 @@
   61_key_lock.html and 62_key_backup.html, drawn by 60_key_form.js on dis-form.css). Where the edit list and a mock
   differ in a word or a place, the mock as drawn governs, since the picture was approved.
 
-  Shape table: server/platform/config/secret-shapes.ts at commit 89bf833d8ed21f785ccc7e836e5f3075d2775d52
+  Shape table: server/platform/config/secret-shapes.ts at commit b85430cd1201c61cfb0defe733ca08b5bafcab33
   The repository's copy of that table (secret-shapes.form.json) is written into the JSON element near the foot of this
   file, between its two SECRET_SHAPES markers, by Dario's script 04_Build\Tools\b201\write_key_form_shapes.py, never by
   hand; the script also writes the commit on the line above. The list of keys, each red sentence and the hint under
@@ -504,7 +504,7 @@ html[data-theme="dark"] .kf-tick input{accent-color:#f2ebdf}
       "shapes": null,
       "apart": false,
       "asked": {
-        "development": "at its release",
+        "development": "R2 call",
         "staging": "at its release",
         "production": "at its release"
       },
@@ -516,7 +516,7 @@ html[data-theme="dark"] .kf-tick input{accent-color:#f2ebdf}
       "shapes": null,
       "apart": false,
       "asked": {
-        "development": "at its release",
+        "development": "R2 call",
         "staging": "at its release",
         "production": "at its release"
       },
@@ -552,7 +552,7 @@ html[data-theme="dark"] .kf-tick input{accent-color:#f2ebdf}
       "shapes": null,
       "apart": false,
       "asked": {
-        "development": "at its release",
+        "development": "R2 call",
         "staging": "at its release",
         "production": "at its release"
       },
@@ -765,17 +765,49 @@ html[data-theme="dark"] .kf-tick input{accent-color:#f2ebdf}
       "fillable": false
     },
     {
-      "id": "FASHN_API_KEY@R3",
+      "id": "FASHN_API_KEY@development",
       "name": "FASHN_API_KEY",
-      "environment": null,
+      "environment": "development",
+      "release": "R3",
+      "asked": "R2 call",
+      "fillable": true
+    },
+    {
+      "id": "FASHN_API_KEY@staging",
+      "name": "FASHN_API_KEY",
+      "environment": "staging",
       "release": "R3",
       "asked": "at its release",
       "fillable": false
     },
     {
-      "id": "REPLICATE_API_TOKEN@R3",
+      "id": "FASHN_API_KEY@production",
+      "name": "FASHN_API_KEY",
+      "environment": "production",
+      "release": "R3",
+      "asked": "at its release",
+      "fillable": false
+    },
+    {
+      "id": "REPLICATE_API_TOKEN@development",
       "name": "REPLICATE_API_TOKEN",
-      "environment": null,
+      "environment": "development",
+      "release": "R3",
+      "asked": "R2 call",
+      "fillable": true
+    },
+    {
+      "id": "REPLICATE_API_TOKEN@staging",
+      "name": "REPLICATE_API_TOKEN",
+      "environment": "staging",
+      "release": "R3",
+      "asked": "at its release",
+      "fillable": false
+    },
+    {
+      "id": "REPLICATE_API_TOKEN@production",
+      "name": "REPLICATE_API_TOKEN",
+      "environment": "production",
       "release": "R3",
       "asked": "at its release",
       "fillable": false
@@ -797,9 +829,25 @@ html[data-theme="dark"] .kf-tick input{accent-color:#f2ebdf}
       "fillable": false
     },
     {
-      "id": "EACHLABS_API_KEY@R4",
+      "id": "EACHLABS_API_KEY@development",
       "name": "EACHLABS_API_KEY",
-      "environment": null,
+      "environment": "development",
+      "release": "R4",
+      "asked": "R2 call",
+      "fillable": true
+    },
+    {
+      "id": "EACHLABS_API_KEY@staging",
+      "name": "EACHLABS_API_KEY",
+      "environment": "staging",
+      "release": "R4",
+      "asked": "at its release",
+      "fillable": false
+    },
+    {
+      "id": "EACHLABS_API_KEY@production",
+      "name": "EACHLABS_API_KEY",
+      "environment": "production",
       "release": "R4",
       "asked": "at its release",
       "fillable": false
