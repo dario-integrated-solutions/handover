@@ -996,11 +996,16 @@ const LOOK = {
   PAYPAL_CLIENT_ID: { fam: "cobalt", icon: "wallet", svc: "PayPal", does: "takes PayPal payments", noShape: "PayPal publishes no key format, so only spaces are checked.", places: { development: "sandbox app 1", staging: "sandbox app 2" } },
   PAYPAL_CLIENT_SECRET: { fam: "cobalt", icon: "wallet", svc: "PayPal", does: "takes PayPal payments", noShape: "PayPal publishes no key format, so only spaces are checked.", places: { development: "sandbox app 1", staging: "sandbox app 2" } },
   PAYPAL_WEBHOOK_ID: { fam: "cobalt", icon: "webhook", svc: "PayPal", does: "checks each payment notice is genuine", noShape: "PayPal publishes no key format, so only spaces are checked.", places: { development: "sandbox app 1", staging: "sandbox app 2" }, cutover: "For a new live webhook." },
-  FASHN_API_KEY: { fam: "orchid", icon: "shirt", svc: "FASHN" },
-  REPLICATE_API_TOKEN: { fam: "orchid", icon: "imgplus", svc: "Replicate" },
+  FASHN_API_KEY: { fam: "orchid", icon: "shirt", svc: "FASHN",
+    /* FASHN's API setup page, read 25 Oct 2026: "You must purchase API credits before you can create an API key." */
+    get: { url: "https://app.fashn.ai/api", words: "Make it on FASHN's API page", note: "Buy API credits first, on the billing page, tab FASHN API.",
+      also: { url: "https://app.fashn.ai/billing", words: "FASHN billing page" } } },
+  REPLICATE_API_TOKEN: { fam: "orchid", icon: "imgplus", svc: "Replicate",
+    get: { url: "https://replicate.com/account/api-tokens", words: "Make it on Replicate's API tokens page", note: "Sign in to Replicate first." } },
   OPENAI_API_KEY: { fam: "orchid", icon: "sparkles", svc: "OpenAI" },
   GEMINI_API_KEY: { fam: "orchid", icon: "sparkles", svc: "Gemini" },
-  EACHLABS_API_KEY: { fam: "orchid", icon: "film", svc: "EachLabs" },
+  EACHLABS_API_KEY: { fam: "orchid", icon: "film", svc: "EachLabs",
+    get: { url: "https://www.eachlabs.ai", words: "Make it on Eachlabs", note: "Sign in, then Settings, then API Keys." } },
   AWIN_API_TOKEN: { fam: "cobalt", icon: "link", svc: "Awin" },
 };
 const lookOf = (name) => LOOK[name] || { fam: "slate", icon: "key", svc: "" };
@@ -1241,7 +1246,8 @@ function card(name) {
   const head = '<div class="kf-ch">' + ic(look.icon, look.fam) + '<div><h3 class="kf-name">' + esc(name) + chip + "</h3>"
     + (look.svc ? '<div class="kf-svc ' + look.fam + '">' + esc(look.svc) + (look.does ? " · " + esc(look.does) : "") + "</div>" : "")
     + (look.get ? '<div class="kf-get"><a href="' + esc(look.get.url) + '" target="_blank" rel="noopener noreferrer">' + ic("key", look.fam) + esc(look.get.words) + "</a>"
-      + (look.get.note ? '<span class="kf-get-note">' + esc(look.get.note) + "</span>" : "") + "</div>" : "")
+      + (look.get.note ? '<span class="kf-get-note">' + esc(look.get.note) + "</span>" : "")
+      + (look.get.also ? '<a href="' + esc(look.get.also.url) + '" target="_blank" rel="noopener noreferrer">' + ic("card", look.fam) + esc(look.get.also.words) + "</a>" : "") + "</div>" : "")
     + '</div><div class="kf-hint">' + hintOf(name) + "</div></div>";
   const fifth = look.fifth
     ? '<div class="kf-fifth"><span class="dis-num orange">5</span><span class="w"><span class="lbl">' + ic("earth") + "At cutover</span>"
