@@ -617,8 +617,8 @@ html[data-theme="dark"] .kf-tick input{accent-color:#f2ebdf}
       "name": "RESEND_API_KEY",
       "environment": "production",
       "release": "R2",
-      "asked": "cutover",
-      "fillable": false
+      "asked": "R2 call",
+      "fillable": true
     },
     {
       "id": "STRIPE_SECRET_KEY@development",
@@ -641,8 +641,8 @@ html[data-theme="dark"] .kf-tick input{accent-color:#f2ebdf}
       "name": "STRIPE_SECRET_KEY",
       "environment": "production",
       "release": "R2",
-      "asked": "cutover",
-      "fillable": false
+      "asked": "R2 call",
+      "fillable": true
     },
     {
       "id": "STRIPE_PUBLISHABLE_KEY@development",
@@ -665,8 +665,8 @@ html[data-theme="dark"] .kf-tick input{accent-color:#f2ebdf}
       "name": "STRIPE_PUBLISHABLE_KEY",
       "environment": "production",
       "release": "R2",
-      "asked": "cutover",
-      "fillable": false
+      "asked": "R2 call",
+      "fillable": true
     },
     {
       "id": "STRIPE_WEBHOOK_SECRET@development",
@@ -689,8 +689,8 @@ html[data-theme="dark"] .kf-tick input{accent-color:#f2ebdf}
       "name": "STRIPE_WEBHOOK_SECRET",
       "environment": "production",
       "release": "R2",
-      "asked": "cutover",
-      "fillable": false
+      "asked": "R2 call",
+      "fillable": true
     },
     {
       "id": "PAYPAL_CLIENT_ID@development",
@@ -761,8 +761,8 @@ html[data-theme="dark"] .kf-tick input{accent-color:#f2ebdf}
       "name": "PAYPAL_WEBHOOK_ID",
       "environment": "production",
       "release": "R2",
-      "asked": "cutover",
-      "fillable": false
+      "asked": "R2 call",
+      "fillable": true
     },
     {
       "id": "FASHN_API_KEY@development",
@@ -777,16 +777,16 @@ html[data-theme="dark"] .kf-tick input{accent-color:#f2ebdf}
       "name": "FASHN_API_KEY",
       "environment": "staging",
       "release": "R3",
-      "asked": "at its release",
-      "fillable": false
+      "asked": "R2 call",
+      "fillable": true
     },
     {
       "id": "FASHN_API_KEY@production",
       "name": "FASHN_API_KEY",
       "environment": "production",
       "release": "R3",
-      "asked": "at its release",
-      "fillable": false
+      "asked": "R2 call",
+      "fillable": true
     },
     {
       "id": "REPLICATE_API_TOKEN@development",
@@ -801,32 +801,32 @@ html[data-theme="dark"] .kf-tick input{accent-color:#f2ebdf}
       "name": "REPLICATE_API_TOKEN",
       "environment": "staging",
       "release": "R3",
-      "asked": "at its release",
-      "fillable": false
+      "asked": "R2 call",
+      "fillable": true
     },
     {
       "id": "REPLICATE_API_TOKEN@production",
       "name": "REPLICATE_API_TOKEN",
       "environment": "production",
       "release": "R3",
-      "asked": "at its release",
-      "fillable": false
+      "asked": "R2 call",
+      "fillable": true
     },
     {
       "id": "OPENAI_API_KEY@R3",
       "name": "OPENAI_API_KEY",
-      "environment": null,
+      "environment": "production",
       "release": "R3",
-      "asked": "at its release",
-      "fillable": false
+      "asked": "R2 call",
+      "fillable": true
     },
     {
       "id": "GEMINI_API_KEY@R3",
       "name": "GEMINI_API_KEY",
-      "environment": null,
+      "environment": "production",
       "release": "R3",
-      "asked": "at its release",
-      "fillable": false
+      "asked": "R2 call",
+      "fillable": true
     },
     {
       "id": "EACHLABS_API_KEY@development",
@@ -841,24 +841,24 @@ html[data-theme="dark"] .kf-tick input{accent-color:#f2ebdf}
       "name": "EACHLABS_API_KEY",
       "environment": "staging",
       "release": "R4",
-      "asked": "at its release",
-      "fillable": false
+      "asked": "R2 call",
+      "fillable": true
     },
     {
       "id": "EACHLABS_API_KEY@production",
       "name": "EACHLABS_API_KEY",
       "environment": "production",
       "release": "R4",
-      "asked": "at its release",
-      "fillable": false
+      "asked": "R2 call",
+      "fillable": true
     },
     {
       "id": "AWIN_API_TOKEN@R5",
       "name": "AWIN_API_TOKEN",
-      "environment": null,
+      "environment": "production",
       "release": "R5",
-      "asked": "at its release",
-      "fillable": false
+      "asked": "R2 call",
+      "fillable": true
     }
   ]
 }
@@ -1230,7 +1230,8 @@ function placeBox(seed) {
   const p = placeOf(seed.environment);
   const look = lookOf(seed.name);
   const where = seed.name + " in " + seed.environment;
-  const label = look.places && look.places[seed.environment] ? '<span class="ps">' + esc(look.places[seed.environment]) + "</span>" : "";
+  const ps = (look.places && look.places[seed.environment]) || (seed.environment === "production" && look.cutover) || "";
+  const label = ps ? '<span class="ps">' + esc(ps) + "</span>" : "";
   return '<div class="kf-place" style="--pl:' + p.edge + '" data-id="' + esc(seed.id) + '">'
     + '<div class="kf-ph"><span class="pn">' + ic(p.icon) + p.word + "</span>" + label + "</div>"
     + '<div class="kf-fr"><input class="dis-field kf-in" type="password" autocomplete="off" autocapitalize="off" spellcheck="false" style="--w:' + (look.w || "32ch") + '" aria-label="' + esc("New key for " + where) + '">'
@@ -1263,7 +1264,7 @@ function placeCounts(rows) {
   return out.sort((a, b) => (order.indexOf(a.env) + 1 || 99) - (order.indexOf(b.env) + 1 || 99));
 }
 function nowBox() {
-  const note = placeCounts(FILL).map((p) => '<span class="u"><b class="' + placeOf(p.env).cls + '">' + p.n + "</b> " + esc(p.env) + " ·</span>").join(" ") + (FILL.some((s) => s.environment === "production") ? ' <span class="u">PayPal live, the rest test keys</span>' : ' <span class="u">test keys only</span>');
+  const note = placeCounts(FILL).map((p) => '<span class="u"><b class="' + placeOf(p.env).cls + '">' + p.n + "</b> " + esc(p.env) + " ·</span>").join(" ") + (FILL.some((s) => s.environment === "production") ? ' <span class="u">live keys in production only</span>' : ' <span class="u">test keys only</span>');
   const rel = uniq(FILL.map((s) => s.release)).map((r) => '<span class="kf-rel">' + esc(r) + "</span>").join(" ");
   const rules = '<ul class="kf-pts kf-rules">' + [["rose", 'Make a <b class="strong">new</b> key for the new app.'], ["slate", '<b class="strong">Never</b> paste the one your first app uses.'], ["rose", 'Name it for its place, like <b class="strong">VM Luxury Mall Deluxe staging</b>.']].map(([h, t]) => "<li>" + dia(h) + "<span>" + t + "</span></li>").join("") + "</ul>";
   return '<section class="kf-box" style="--edge:var(--dis-head)"><div class="kf-h"><h2 class="t">' + ic("key", "indigo") + '<span id="nowtitle">Now, today</span> ' + rel + '</h2><span class="note">' + note + "</span></div>"
@@ -1355,7 +1356,7 @@ function paintTiles() {
   const t2 = '<div class="kf-tile mini" style="--edge:var(--kf-cobalt)"><div class="lb">' + ic("webhook", "cobalt") + '<span class="long">When payments are built</span><span class="short">Payments</span></div><div class="val"><span class="cobalt">' + PAY_ROWS.length + '</span><span class="of"><span class="long">Webhook keys</span><span class="short">Keys</span></span></div><div class="sub"><span class="u">Development and staging</span></div></div>';
   const t3 = '<div class="kf-tile mini" style="--edge:var(--kf-teal)"><div class="lb">' + ic("earth", "teal") + '<span>At cutover</span></div><div class="val"><span class="teal">' + CUT_ROWS.length + '</span><span class="of"><span class="long">Production keys</span><span class="short">Keys</span></span></div><div class="sub"><span class="u">When your new app goes live</span></div></div>';
   const t4 = '<div class="kf-tile mini" style="--edge:var(--kf-orchid)"><div class="lb">' + ic("hourglass", "orchid") + '<span class="long">Later releases</span><span class="short">Later</span></div><div class="val"><span class="orchid">' + REL_ROWS.length + '</span><span class="of">Keys</span></div><div class="sub">' + releases + "</div></div>";
-  $("#tiles").innerHTML = '<div class="kf-tiles">' + t1 + t2 + t3 + t4 + "</div>";
+  $("#tiles").innerHTML = '<div class="kf-tiles">' + t1 + (PAY_ROWS.length ? t2 : "") + (CUT_ROWS.length ? t3 : "") + (REL_ROWS.length ? t4 : "") + "</div>";
   $("#nowtitle").textContent = label;
 }
 function paintAnswer() {
