@@ -713,8 +713,8 @@ html[data-theme="dark"] .kf-tick input{accent-color:#f2ebdf}
       "name": "PAYPAL_CLIENT_ID",
       "environment": "production",
       "release": "R2",
-      "asked": "cutover",
-      "fillable": false
+      "asked": "R2 call",
+      "fillable": true
     },
     {
       "id": "PAYPAL_CLIENT_SECRET@development",
@@ -737,8 +737,8 @@ html[data-theme="dark"] .kf-tick input{accent-color:#f2ebdf}
       "name": "PAYPAL_CLIENT_SECRET",
       "environment": "production",
       "release": "R2",
-      "asked": "cutover",
-      "fillable": false
+      "asked": "R2 call",
+      "fillable": true
     },
     {
       "id": "PAYPAL_WEBHOOK_ID@development",
@@ -1263,7 +1263,7 @@ function placeCounts(rows) {
   return out.sort((a, b) => (order.indexOf(a.env) + 1 || 99) - (order.indexOf(b.env) + 1 || 99));
 }
 function nowBox() {
-  const note = placeCounts(FILL).map((p) => '<span class="u"><b class="' + placeOf(p.env).cls + '">' + p.n + "</b> " + esc(p.env) + " ·</span>").join(" ") + ' <span class="u">test keys only</span>';
+  const note = placeCounts(FILL).map((p) => '<span class="u"><b class="' + placeOf(p.env).cls + '">' + p.n + "</b> " + esc(p.env) + " ·</span>").join(" ") + (FILL.some((s) => s.environment === "production") ? ' <span class="u">PayPal live, the rest test keys</span>' : ' <span class="u">test keys only</span>');
   const rel = uniq(FILL.map((s) => s.release)).map((r) => '<span class="kf-rel">' + esc(r) + "</span>").join(" ");
   const rules = '<ul class="kf-pts kf-rules">' + [["rose", 'Make a <b class="strong">new</b> key for the new app.'], ["slate", '<b class="strong">Never</b> paste the one your first app uses.'], ["rose", 'Name it for its place, like <b class="strong">VM Luxury Mall Deluxe staging</b>.']].map(([h, t]) => "<li>" + dia(h) + "<span>" + t + "</span></li>").join("") + "</ul>";
   return '<section class="kf-box" style="--edge:var(--dis-head)"><div class="kf-h"><h2 class="t">' + ic("key", "indigo") + '<span id="nowtitle">Now, today</span> ' + rel + '</h2><span class="note">' + note + "</span></div>"
